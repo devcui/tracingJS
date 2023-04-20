@@ -1,5 +1,5 @@
 export interface Trace<T = unknown> {
-  tags: string[];
+  tags: TraceTag[];
   type: TraceType;
   extra: TraceExtra;
   url: string;
@@ -8,6 +8,7 @@ export interface Trace<T = unknown> {
   data?: T;
 }
 
+export type TraceTag = "performance" | "error" | "event";
 export type TraceType = "performance" | "error" | "event";
 
 export interface TraceExtra {
