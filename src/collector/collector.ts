@@ -2,11 +2,17 @@ import {Trace, TraceExtra} from "../trace";
 import {Collect} from "./interface";
 
 export abstract class Collector implements Collect {
-    readonly extra: TraceExtra;
+  extra?: TraceExtra;
 
-    constructor(extra: TraceExtra) {
-        this.extra = extra;
+  protected constructor(extra?: TraceExtra) {
+    if (extra) {
+      this.extra = extra;
     }
+  }
 
-    abstract collect(data: Trace): void ;
+  collect(data: Trace): void {
+    if (this.extra) {
+      data.extra = this.extra
+    }
+  }
 }

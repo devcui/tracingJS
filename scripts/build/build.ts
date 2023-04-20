@@ -41,4 +41,4 @@ async function buildAll() {
     await buildModule("cjs");
 }
 
-buildAll();
+buildAll().then();

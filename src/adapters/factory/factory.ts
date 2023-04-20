@@ -1,20 +1,14 @@
-import { ChromeAdapter } from "../browser/chrome";
-import { SafariAdapter } from "../browser/safari";
-import { BrowserAdapter } from "../adapter";
-import { UnknownAdapter } from "../browser/unknown";
-import { FirefoxAdapter } from "../browser/firefox";
+import {BrowserAdapter} from "../adapter";
+import {EdgeAdapter, UnknownAdapter} from "../browser";
+import {Collector} from "../../collector";
 
 export class BrowserAdapterFactory {
-  static createAdapter(browserType: string): BrowserAdapter {
+  static createAdapter(window: Window, browserType: string, collector: Collector): BrowserAdapter {
     switch (browserType) {
-      case "Chrome":
-        return new ChromeAdapter();
-      case "Firefox":
-        return new FirefoxAdapter();
-      case "Safari":
-        return new SafariAdapter();
+      case "edge":
+        return new EdgeAdapter(window, collector);
       default:
-        throw new UnknownAdapter();
+        throw new UnknownAdapter(window, collector);
     }
   }
 }
