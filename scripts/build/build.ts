@@ -1,10 +1,10 @@
 import typescript from "@rollup/plugin-typescript";
 import { ModuleFormat, OutputOptions, RollupOptions, rollup } from "rollup";
-import { babel } from "@rollup/plugin-babel";
 
 function format(format: ModuleFormat): RollupOptions {
   return {
     input: "src/index.ts",
+    external: ["ua-parser-js"],
     output: {
       minifyInternalExports: true,
       sourcemap: true,
@@ -13,7 +13,7 @@ function format(format: ModuleFormat): RollupOptions {
       name: "tracingJS",
       esModule: true,
       globals: {
-        tracingjs: "tracingJS",
+        "ua-parser-js": "uaParserJs",
       },
     },
     plugins: [
