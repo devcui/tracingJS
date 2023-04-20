@@ -1,0 +1,28 @@
+{
+  "name": "@yelon/tracingjs",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "build": "esno ./scripts/build/build.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/devcui/tracingJS.git"
+  },
+  "author": "devcui",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/devcui/tracingJS/issues"
+  },
+  "homepage": "https://github.com/devcui/tracingJS#readme",
+  "devDependencies": {
+    "@rollup/plugin-babel": "^6.0.3",
+    "@rollup/plugin-typescript": "^11.1.0",
+    "@types/node": "^18.15.11",
+    "esno": "^0.16.3",
+    "node": "^19.8.1",
+    "rollup": "^3.20.6",
+    "tslib": "^2.5.0",
+    "typescript": "^5.0.4"
+  }
+}
