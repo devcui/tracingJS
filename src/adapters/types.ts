@@ -1,6 +1,7 @@
 import { CollectorStrategy } from "../collector";
 import { Trace } from "../trace";
 import { CollectingClicksStrategy } from "./service";
+
 export interface TracingStrategy {
   collectorStrategy: CollectorStrategy;
   collectingClicksStrategy: CollectingClicksStrategy;

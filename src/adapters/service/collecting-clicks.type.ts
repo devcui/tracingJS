@@ -1,13 +1,10 @@
-import { TClick, Trace } from "../../trace";
+import {TClick} from "../../trace";
 
 
 export interface CollectingClicksStrategy {
-  collectingClicks(event: Event): Trace<TClick> | undefined;
+    collectingClicks(event: Event): TClick | undefined;
 }
 
 export interface CollectingClicks {
-  collectingClicks(
-    collectingClicksStrategy: CollectingClicksStrategy,
-    event: Event
-  ): Trace<TClick> | undefined;
+    collectingClicks(collectingClicksStrategy: CollectingClicksStrategy, event: Event): TClick | undefined;
 }
