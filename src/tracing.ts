@@ -1,11 +1,25 @@
-import {UAParser} from "ua-parser-js";
-import {BrowserAdapter, BrowserAdapterFactory} from "./adapters";
-import {Collector} from "./collector";
+import { UAParser } from "ua-parser-js";
+import {
+  BrowserAdapter,
+  BrowserAdapterFactory,
+  CollectingClicksStrategy,
+} from "./adapters";
+import { CollectorStrategy, WorkerCollector } from "./collector";
+import { AdapterCollectingClicks } from "./adapters/service/impl/adapter.collecting-clicks";
 
 export class TracingJS {
-  static trace(window: Window, collector: Collector) {
-    const type = UAParser(window.navigator.userAgent).browser.name?.toLocaleLowerCase() || "";
-    const adapter: BrowserAdapter = BrowserAdapterFactory.createAdapter(window, type, collector);
-    adapter.linkStart();
+  static trace(
+    window: Window,
+    collectorStrategy: CollectorStrategy = WorkerCollector.create(),
+    collectingClicksStrategy: CollectingClicksStrategy = AdapterCollectingClicks.create()
+  ) {
+    const type =
+      UAParser(window.navigator.userAgent).browser.name?.toLocaleLowerCase() ||
+      "";
+    const adapter: BrowserAdapter = BrowserAdapterFactory.createAdapter(
+      window,
+      type
+    );
+    adapter.start(collectorStrategy, collectingClicksStrategy);
   }
 }

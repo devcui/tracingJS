@@ -1,22 +1,30 @@
-import { Collector } from "../collector";
-import { Collect } from "../collector";
-import { CollectingClicks } from "../service";
-import { CollectingClicksAdapter } from "../service/impl/collecting-clicks.adapter";
+import { CollectorStrategy, WorkerCollector } from "../collector";
 import { TClick, Trace } from "../trace";
-import { fromEvent, Observable } from "rxjs";
+import { fromEvent, Observable, Subject, takeUntil } from "rxjs";
+import { AdapterCollectingClicks, CollectingClicks, CollectingClicksStrategy } from "./service";
+import { AdapterCollector } from "./types";
 
-export abstract class BrowserAdapter implements Collect, CollectingClicks {
-  private readonly collector: Collector;
+export abstract class BrowserAdapter
+  implements AdapterCollector, CollectingClicks
+{
   window: Window;
   clickEvent: Observable<Event>;
+  destroy$: Subject<any> = new Subject();
 
-  constructor(window: Window, collector: Collector) {
+  constructor(window: Window) {
     this.window = window;
-    this.collector = collector;
-    this.clickEvent = fromEvent(this.window, "click");
+    this.clickEvent = fromEvent(this.window, "click").pipe(
+      takeUntil(this.destroy$)
+    );
+    this.window.addEventListener("unload", () => {
+      this.destroy$.complete();
+    });
   }
 
-  collect(data: Trace): void {
+  collect<T extends Trace>(
+    collectorStrategy: CollectorStrategy,
+    data: T
+  ): void {
     this.window.navigator.geolocation.getCurrentPosition(
       (position) => {
         data.position = {
@@ -28,10 +36,10 @@ export abstract class BrowserAdapter implements Collect, CollectingClicks {
           altitude: position.coords.altitude,
           altitudeAccuracy: position.coords.altitudeAccuracy,
         };
-        this.collector.collect(data);
+        collectorStrategy.collect(data);
       },
       (_) => {
-        this.collector.collect(data);
+        collectorStrategy.collect(data);
       },
       {
         enableHighAccuracy: true,
@@ -39,11 +47,14 @@ export abstract class BrowserAdapter implements Collect, CollectingClicks {
     );
   }
 
-  linkStart(): void {
+  start(
+    collectorStrategy: CollectorStrategy = WorkerCollector.create(),
+    collectingClicksStrategy: CollectingClicksStrategy = AdapterCollectingClicks.create()
+  ): void {
     this.clickEvent.subscribe((event: Event) => {
-      const data = this.collectingClicks(event);
+      const data = this.collectingClicks(collectingClicksStrategy, event);
       if (data) {
-        this.collect({
+        this.collect<Trace<TClick>>(collectorStrategy, {
           ...data,
           tags: ["event", "click"],
         });
@@ -51,7 +62,10 @@ export abstract class BrowserAdapter implements Collect, CollectingClicks {
     });
   }
 
-  collectingClicks(event: Event): Trace<TClick> | undefined {
-    return CollectingClicksAdapter.create().collectingClicks(event);
+  collectingClicks(
+    collectingClicksStrategy: CollectingClicksStrategy,
+    event: Event
+  ): Trace<TClick> | undefined {
+    return collectingClicksStrategy.collectingClicks(event);
   }
 }

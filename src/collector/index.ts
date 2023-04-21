@@ -1,3 +1,3 @@
-export * from "./worker";
-export * from "./interface"
+export * from "./types";
 export * from "./collector";
+export * from "./impl";

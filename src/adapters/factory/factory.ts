@@ -1,14 +1,13 @@
 import {BrowserAdapter} from "../adapter";
 import {EdgeAdapter, UnknownAdapter} from "../browser";
-import {Collector} from "../../collector";
 
 export class BrowserAdapterFactory {
-  static createAdapter(window: Window, browserType: string, collector: Collector): BrowserAdapter {
+  static createAdapter(window: Window, browserType: string): BrowserAdapter {
     switch (browserType) {
       case "edge":
-        return new EdgeAdapter(window, collector);
+        return new EdgeAdapter(window);
       default:
-        throw new UnknownAdapter(window, collector);
+        throw new UnknownAdapter(window);
     }
   }
 }

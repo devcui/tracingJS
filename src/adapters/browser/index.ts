@@ -1,2 +1,2 @@
-export * from "./edge"
+export * from "./edge";
 export * from "./unknown";

@@ -1,7 +1,7 @@
 import {Trace, TraceExtra} from "../trace";
-import {Collect} from "./interface";
+import { CollectorStrategy } from "./types";
 
-export abstract class Collector implements Collect {
+export abstract class Collector implements CollectorStrategy {
   extra?: TraceExtra;
 
   protected constructor(extra?: TraceExtra) {
