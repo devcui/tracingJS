@@ -1,8 +1,3 @@
-import {BrowserAdapter} from "../adapter";
-import {TClick, Trace} from "../../trace";
+import { BrowserAdapter } from "../adapter";
 
-export class EdgeAdapter extends BrowserAdapter {
-  handleClickEvent(event: Event): Trace<TClick> {
-    return {e: 'hahaha'} as any
-  }
-}
+export class EdgeAdapter extends BrowserAdapter {}
