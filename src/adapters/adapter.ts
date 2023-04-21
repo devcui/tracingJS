@@ -1,21 +1,34 @@
 import { CollectorStrategy, WorkerCollector } from "../collector";
 import { TClick, Trace } from "../trace";
 import { fromEvent, Observable, Subject, takeUntil } from "rxjs";
-import { AdapterCollectingClicks, CollectingClicks, CollectingClicksStrategy } from "./service";
-import { AdapterCollector } from "./types";
+import {
+  AdapterCollectingClicks,
+  CollectingClicks,
+  CollectingClicksStrategy,
+} from "./service";
+import { AdapterCollector, TracingStrategy } from "./types";
 
 export abstract class BrowserAdapter
   implements AdapterCollector, CollectingClicks
 {
   window: Window;
+  strategy: TracingStrategy;
   clickEvent: Observable<Event>;
   destroy$: Subject<any> = new Subject();
 
-  constructor(window: Window) {
+  constructor(window: Window, strategy?: TracingStrategy) {
     this.window = window;
     this.clickEvent = fromEvent(this.window, "click").pipe(
       takeUntil(this.destroy$)
     );
+    if (strategy) {
+      this.strategy = strategy;
+    } else {
+      this.strategy = {
+        collectorStrategy: WorkerCollector.create(),
+        collectingClicksStrategy: AdapterCollectingClicks.create(),
+      };
+    }
     this.window.addEventListener("unload", () => {
       this.destroy$.complete();
     });
@@ -47,14 +60,14 @@ export abstract class BrowserAdapter
     );
   }
 
-  start(
-    collectorStrategy: CollectorStrategy = WorkerCollector.create(),
-    collectingClicksStrategy: CollectingClicksStrategy = AdapterCollectingClicks.create()
-  ): void {
+  start(): void {
     this.clickEvent.subscribe((event: Event) => {
-      const data = this.collectingClicks(collectingClicksStrategy, event);
+      const data = this.collectingClicks(
+        this.strategy.collectingClicksStrategy,
+        event
+      );
       if (data) {
-        this.collect<Trace<TClick>>(collectorStrategy, {
+        this.collect<Trace<TClick>>(this.strategy.collectorStrategy, {
           ...data,
           tags: ["event", "click"],
         });
