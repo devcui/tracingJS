@@ -40,7 +40,6 @@ export interface TraceScreen {
     readonly availWidth: number;
     readonly colorDepth: number;
     readonly height: number;
-    readonly orientation: ScreenOrientation;
     readonly pixelDepth: number;
     readonly width: number;
 }
