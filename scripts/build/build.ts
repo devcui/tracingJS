@@ -1,6 +1,6 @@
 import typescript from "@rollup/plugin-typescript";
 import { ModuleFormat, OutputOptions, RollupOptions, rollup } from "rollup";
-import { copy, rmrf } from "../utils";
+import { copy, copyPackageJSON, rmrf } from "../utils";
 
 function format(format: ModuleFormat): RollupOptions {
   return {
@@ -45,8 +45,8 @@ async function buildAll() {
 
 buildAll().then(() => {
   console.log("copy package.json to dist......");
-  copy("package.json", "dist/package.json");
+  copyPackageJSON("dist/tracingJS/package.json")
   console.log("copy example to dist......");
-  copy("example", "dist/example");
+  copy("example", "dist/tracingJS/example");
   console.log("copy files to dist over......");
 });

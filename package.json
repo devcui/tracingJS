@@ -1,9 +1,10 @@
 {
   "name": "@yelon/tracingjs",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "scripts": {
-    "build": "esno ./scripts/build/build.ts"
+    "build": "esno ./scripts/build/build.ts",
+    "publish": "esno ./scripts/publish/publish.ts"
   },
   "repository": {
     "type": "git",

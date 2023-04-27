@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+import fs from "fs";
+import path from "path";
 
 export function copy(source: string, dist: string) {
   if (!fs.existsSync(source)) {
@@ -17,7 +17,7 @@ export function copy(source: string, dist: string) {
   }
 }
 
-function copyDirRecursive(source: string, dist: string) {
+export function copyDirRecursive(source: string, dist: string) {
   if (!fs.existsSync(dist)) {
     fs.mkdirSync(dist);
   }
@@ -36,4 +36,12 @@ function copyDirRecursive(source: string, dist: string) {
       }
     }
   });
+}
+
+export function copyPackageJSON(dist: string): void {
+  const packageJson = JSON.parse(
+    fs.readFileSync("package.json", { encoding: "utf8" })
+  );
+  delete packageJson.scripts;
+  fs.writeFileSync(dist, JSON.stringify(packageJson, null, 2));
 }
