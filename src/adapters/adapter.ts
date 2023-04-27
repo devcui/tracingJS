@@ -7,7 +7,7 @@ import {
   CollectingClicksStrategy,
 } from "./service";
 import { AdapterCollector, TracingStrategy } from "./types";
-import { Packet, win } from "../utils";
+import { Packet, win, UserAgent } from "../utils";
 
 export abstract class BrowserAdapter
   implements AdapterCollector, CollectingClicks
@@ -46,9 +46,11 @@ export abstract class BrowserAdapter
           altitude: position.coords.altitude,
           altitudeAccuracy: position.coords.altitudeAccuracy,
         };
+        data.userAgent = UserAgent();
         collectorStrategy.collect(data);
       },
       (_) => {
+        data.userAgent = UserAgent();
         collectorStrategy.collect(data);
       },
       {

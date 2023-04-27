@@ -1,2 +1,2 @@
 export * from "./rmrf"
-export * from "./packageJson"
+export * from "./copy"
