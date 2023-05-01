@@ -1,7 +1,8 @@
+import { TraceScreen, TraceVisibleArea } from "../types";
+
 `use strict`;
 
 
-import {TraceScreen, TraceVisibleArea} from "../trace";
 
 let _win: Window;
 export const win = (argWin?: Window): Window => {

@@ -1,5 +1,9 @@
-import { Trace } from "../trace";
+import { TracePacket } from "../types";
 
-export interface CollectorStrategy {
-  collect<T extends Trace>(data: T): void;
+export interface Collect {
+  collect(data: TracePacket, strategy: CollectStrategy): void;
+}
+
+export interface CollectStrategy {
+  collect(data: TracePacket): void;
 }

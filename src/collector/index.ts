@@ -1,3 +1,5 @@
-export * from "./types";
+export * from "./collect";
+export * from "./collector.factory";
 export * from "./collector";
-export * from "./impl";
+export * from "./simple.collector";
+export * from "./types";

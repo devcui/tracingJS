@@ -1,5 +1,5 @@
 import { UAParser } from "ua-parser-js";
-import { TraceUserAgent } from "../trace";
+import { TraceUserAgent } from "../types";
 
 export function UserAgent(): TraceUserAgent {
   const agent = UAParser();

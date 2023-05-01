@@ -1,14 +1,20 @@
-import { Trace, TraceTag, TraceType } from "../trace";
+import { TraceExtra, TracePacket, TraceTag, TraceType } from "../types";
 import { Win } from "./window";
 
 export class Packet {
-  static create<T>(type: TraceType, data: T, ...tags: TraceTag[]): Trace<T> {
+  static create<T>(
+    type: TraceType,
+    data: T,
+    extra?: TraceExtra,
+    ...tags: TraceTag[]
+  ): TracePacket<T> {
     return {
       data: data,
+      triggerTime: Date.now(),
       screen: Win.screenArgs(),
       visible: Win.visibleArea(),
-      triggerTime: Date.now(),
       url: Win.url(),
+      extra: extra,
       type: type,
       tags: tags,
     };

@@ -1,18 +1,9 @@
-import {Trace, TraceExtra} from "../trace";
-import { CollectorStrategy } from "./types";
+import { TracePacket } from "../types";
+import { CollectStrategy } from "./types";
 
-export abstract class Collector implements CollectorStrategy {
-  extra?: TraceExtra;
-
-  protected constructor(extra?: TraceExtra) {
-    if (extra) {
-      this.extra = extra;
-    }
-  }
-
-  collect(data: Trace): void {
-    if (this.extra) {
-      data.extra = this.extra
-    }
+export abstract class Collector implements CollectStrategy {
+  constructor(private strategy: CollectStrategy) {}
+  collect<T>(data: TracePacket<T>): void {
+    this.strategy.collect(data);
   }
 }
