@@ -69,6 +69,7 @@ export class TracingJS {
     win(window);
     this.extra = extra;
     this.registry = registry;
+    this.addDestoryListener();
   }
 
   public run(): void {
@@ -94,4 +95,10 @@ export class TracingJS {
   }
 
   private traceEventPerformance(): void {}
+
+  private addDestoryListener(): void {
+    win().addEventListener("unload", () => {
+      this.destory$.complete();
+    });
+  }
 }
