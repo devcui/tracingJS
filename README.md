@@ -2,6 +2,20 @@
 
 tracking user behavior data
 
+# install
+
+```shell
+npm install @yelon/tracingjs
+```
+
+# import
+
+you can import from
+
+- `@yelon/tracingjs/cjs`
+- `@yelon/tracingjs/es`
+- `@yelon/tracingjs/umd`
+
 # how to use
 
 ```ts
