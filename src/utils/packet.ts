@@ -3,8 +3,8 @@ import { TracePosition, TraceUserAgent } from "../types";
 import { TraceExtra, TracePacket, TraceTag, TraceType } from "../types";
 import { Win, win } from "./window";
 
-declare var posi: TracePosition | undefined;
-declare var uagent: TraceUserAgent | undefined;
+let posi: TracePosition | undefined;
+let uagent: TraceUserAgent | undefined;
 export class Packet {
   static create<T>(
     type: TraceType,
