@@ -14,6 +14,7 @@ import {
   Browser,
   TraceExtra,
   TracePacket,
+  TraceTag,
   TraceType,
   TracingRegistry,
 } from "./types";
@@ -35,17 +36,19 @@ export class TracingJS {
   private registry?: TracingRegistry;
   private extra?: TraceExtra;
   private destory$: Subject<any> = new Subject();
+
   private get type(): string {
     return (
       UAParser(win().navigator.userAgent).browser.name?.toLocaleLowerCase() ||
       "default"
     );
   }
+
   private get browser(): Browser {
     if (this.registry && this.registry[this.type]) {
       return this.registry[this.type];
     } else {
-      return this.defaultRegistry.default;
+      return this.defaultRegistry["default"];
     }
   }
 
@@ -53,7 +56,7 @@ export class TracingJS {
     if (this.browser.collector) {
       return this.browser.collector;
     } else {
-      return this.defaultRegistry.default.collector!;
+      return this.defaultRegistry["default"].collector!;
     }
   }
 
@@ -61,7 +64,7 @@ export class TracingJS {
     if (this.browser.clickTracker) {
       return this.browser.clickTracker;
     } else {
-      return this.defaultRegistry.default.clickTracker!;
+      return this.defaultRegistry["default"].clickTracker!;
     }
   }
 
@@ -69,7 +72,7 @@ export class TracingJS {
     win(window);
     this.extra = extra;
     this.registry = registry;
-    this.addDestoryListener();
+    this.addDestroyListener();
   }
 
   public run(): void {
@@ -84,7 +87,13 @@ export class TracingJS {
         map((event: Event) => {
           const data = this.clickTracker.track(event);
           if (!data) return undefined;
-          return Packet.create<TraceClick>(TraceType.Event, data, this.extra);
+          return Packet.create<TraceClick>(
+            TraceType.Event,
+            data,
+            this.extra,
+            TraceTag.Click,
+            TraceTag.Event
+          );
         })
       )
       .subscribe((packet: TracePacket<TraceClick> | undefined) => {
@@ -96,7 +105,7 @@ export class TracingJS {
 
   private traceEventPerformance(): void {}
 
-  private addDestoryListener(): void {
+  private addDestroyListener(): void {
     win().addEventListener("unload", () => {
       this.destory$.complete();
     });
