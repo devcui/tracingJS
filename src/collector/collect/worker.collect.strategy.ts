@@ -2,7 +2,7 @@ import { TracePacket } from "../../types";
 import { CollectStrategy } from "../types";
 
 export class WorkerCollectStrategy implements CollectStrategy {
-  private worker?: Worker;
+  private readonly worker?: Worker;
   constructor(workerSrc: string) {
     if (typeof Worker === "undefined") {
       throw new Error("Worker is not defined");

@@ -1,36 +1,18 @@
-import { UAParser } from "ua-parser-js";
-import { TracePosition, TraceUserAgent } from "../types";
-import { TraceExtra, TracePacket, TraceTag, TraceType } from "../types";
-import { Win, win } from "./window";
+import {TraceExtra, TracePacket} from "../types";
+import {Win} from "./window";
 
-let posi: TracePosition | undefined;
-let uagent: TraceUserAgent | undefined;
 export class Packet {
-  static create<T>(
-    type: TraceType,
-    data: T,
-    extra?: TraceExtra,
-    ...tags: TraceTag[]
-  ): TracePacket<T> {
-    if (!posi) {
-      win().navigator.geolocation.getCurrentPosition((position) => {
-        posi = position.coords;
-      });
+    static create<T>(
+        data: T,
+        extra?: TraceExtra,
+    ): TracePacket<T> {
+        return {
+            data: data,
+            triggerTime: Date.now(),
+            screen: Win.screenArgs(),
+            visible: Win.visibleArea(),
+            url: Win.url(),
+            extra: extra,
+        };
     }
-    if (!uagent) {
-      uagent = UAParser();
-    }
-    return {
-      data: data,
-      triggerTime: Date.now(),
-      screen: Win.screenArgs(),
-      visible: Win.visibleArea(),
-      position: posi,
-      userAgent: uagent,
-      url: Win.url(),
-      extra: extra,
-      type: type,
-      tags: tags,
-    };
-  }
 }
