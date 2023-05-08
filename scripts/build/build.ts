@@ -48,5 +48,6 @@ buildAll().then(() => {
     copyPackageJSON("dist/tracingJS/package.json")
     console.log("copy example to dist......");
     copy("example", "dist/tracingJS/example");
+    copy("README.md", "dist/tracingJS/README.md");
     console.log("copy files to dist over......");
 });
