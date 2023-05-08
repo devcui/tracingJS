@@ -91,7 +91,7 @@ export interface TraceVisibleArea {
 }
 
 export enum TracePoint {
-    ID = "data-event-id",
+    EVENT_ID = "data-event-id",
     Title = "data-event-title",
     Container = "data-event-container",
 }

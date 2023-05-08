@@ -7,3 +7,5 @@ export interface Collect {
 export interface CollectStrategy {
   collect(data: TracePacket): void;
 }
+
+export type TokenType = string | null | undefined
