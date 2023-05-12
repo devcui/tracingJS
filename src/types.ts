@@ -1,5 +1,5 @@
 import {Collector} from "./collector";
-import {TraceClick, TracePerformance, Tracker} from "./tracker";
+import {Tracker} from "./tracker";
 
 export interface TracePacket<T = any> {
     [key: string]: any;
@@ -17,14 +17,19 @@ export interface TracePacket<T = any> {
 }
 
 export enum TraceTag {
-    Event = "event",
-    Click = "click",
+    EVENT = "event",
+    CLICK = "click",
+    XHR = "XMLHttpRequest",
+    XHR_SEND = "XMLHttpRequestSend",
+    XHR_OPEN = "XMLHttpRequestOpen",
+    FETCH = "fetch"
 }
 
 export enum TraceType {
-    Error = "error",
-    Event = "event",
-    Performance = "performance",
+    ERROR = "error",
+    HTTP = "http",
+    EVENT = "event",
+    PERFORMANCE = "performance",
 }
 
 export interface TraceExtra {
@@ -102,6 +107,7 @@ export interface TracingRegistry {
 
 export interface Browser {
     collector?: Collector;
-    clickTracker?: Tracker<TraceClick>;
-    performanceTracker?: Tracker<TracePerformance>;
+    clickTracker?: Tracker;
+    httpTracker?: Tracker;
+    fetchTracker?: Tracker
 }

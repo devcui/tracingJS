@@ -3,7 +3,7 @@ import {clone, MATCH_POINTS} from "../../utils";
 import {TrackStrategy} from "../types";
 import {TraceClick} from "./types";
 
-export class DefaultClickTrackStrategy implements TrackStrategy<TraceClick> {
+export class DefaultClickTrackStrategy implements TrackStrategy<Event, TraceClick> {
 
     track(event: Event): TraceClick | undefined {
         if (!event.target) return undefined;

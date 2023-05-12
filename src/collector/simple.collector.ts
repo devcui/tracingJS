@@ -1,6 +1,6 @@
 import {Collector} from "./collector";
 import {CollectStrategy} from "./types";
-import {TracePacket, TracePosition, TraceTag, TraceType, TraceUserAgent} from "../types";
+import {TracePacket, TracePosition, TraceUserAgent} from "../types";
 import {win} from "../utils";
 import {UAParser} from "ua-parser-js";
 
@@ -76,8 +76,6 @@ export class SimpleCollector extends Collector {
         data["timezoneOffset"] = this.timezoneOffset
         data["position"] = this.position
         data["userAgent"] = this.userAgent
-        data.type = TraceType.Event
-        data.tags = [TraceTag.Event, TraceTag.Click]
         // post data
         this.strategy.collect(data);
     }

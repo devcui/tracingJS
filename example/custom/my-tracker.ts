@@ -1,6 +1,6 @@
 import {
   TrackStrategy,
-  TrackStrategyFactory,
+  ClickTrackStrategyFactory,
   Tracker,
   TrackerFactory,
 } from "../dist/tracingJS/es";
@@ -33,7 +33,7 @@ export class MyTrackStrategy implements TrackStrategy<any> {
 }
 
 // generate your own track strategy factory or use default
-export class MyTrackStrategyFactory extends TrackStrategyFactory {
+export class MyClickTrackStrategyFactory extends ClickTrackStrategyFactory {
   static createMyTrack(): TrackStrategy<any> {
     return new MyTrackStrategy();
   }

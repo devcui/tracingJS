@@ -4,7 +4,7 @@ import {
     TraceClick,
     TracingJS,
     TracingRegistry,
-    TrackStrategyFactory,
+    ClickTrackStrategyFactory,
     TrackerFactory,
 } from "@yelon/tracingJS/es";
 
@@ -23,7 +23,7 @@ export function registryMain() {
                 CollectStrategyFactory.createConsole()
             ),
             clickTracker: TrackerFactory.create<TraceClick>(
-                TrackStrategyFactory.createChromeClick()
+                ClickTrackStrategyFactory.createChromeClick()
             ),
         },
         firefox: {
@@ -31,7 +31,7 @@ export function registryMain() {
                 CollectStrategyFactory.createConsole()
             ),
             clickTracker: TrackerFactory.create<TraceClick>(
-                TrackStrategyFactory.createDefaultClick()
+                ClickTrackStrategyFactory.createDefaultClick()
             ),
         },
         // edge hasn't click tracker,so used default.clickTracker
@@ -43,7 +43,7 @@ export function registryMain() {
         // chrome hasn't collector,so used default.collector
         chrome: {
             clickTracker: TrackerFactory.create<TraceClick>(
-                TrackStrategyFactory.createChromeClick()
+                ClickTrackStrategyFactory.createChromeClick()
             ),
         },
     };

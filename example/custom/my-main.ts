@@ -6,7 +6,7 @@ import {
     MyCollectorFactory,
     MyCollectorStrategyFactory,
 } from "./my-collect";
-import {MyTrackStrategyFactory, MyTrackerFactory} from "./my-tracker";
+import {MyClickTrackStrategyFactory, MyTrackerFactory} from "./my-tracker";
 
 export function myMain() {
     TracingJS.init(window)
@@ -16,7 +16,7 @@ export function myMain() {
                 MyCollectorStrategyFactory.createMyCollectStrategy({say: "ahaha"})
             ),
             clickTracker: MyTrackerFactory.createMyTracker(
-                MyTrackStrategyFactory.createMyTrack()
+                MyClickTrackStrategyFactory.createMyTrack()
             ),
         },
     };

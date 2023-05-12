@@ -1,15 +1,27 @@
 import UAParser from "ua-parser-js";
-import {CollectStrategyFactory, Collector, CollectorFactory} from "./collector";
-import {TraceClick, TrackStrategyFactory, Tracker, TrackerFactory} from "./tracker";
-import {Browser, TraceExtra, TracePacket, TracingRegistry} from "./types";
-import {Packet, win} from "./utils";
-import {Subject, fromEvent, map, takeUntil} from "rxjs";
+import {Collector, CollectorFactory, CollectStrategyFactory} from "./collector";
+import {
+    ClickTrackStrategyFactory,
+    EventFetch,
+    EventHttp,
+    HttpTrackStrategyFactory,
+    TraceClick,
+    TraceFetch,
+    TraceHttp,
+    Tracker,
+    TrackerFactory
+} from "./tracker";
+import {Browser, TraceExtra, TracePacket, TraceTag, TraceType, TracingRegistry} from "./types";
+import {IGNORE_URL, Packet, replaceAop, VoidFun, win} from "./utils";
+import {fromEvent, map, Subject, takeUntil} from "rxjs";
 
 export class TracingJS {
     private defaultRegistry: TracingRegistry = {
         default: {
             collector: CollectorFactory.create(CollectStrategyFactory.createConsole()),
-            clickTracker: TrackerFactory.create<TraceClick>(TrackStrategyFactory.createDefaultClick()),
+            clickTracker: TrackerFactory.create<Event, TraceClick>(ClickTrackStrategyFactory.createDefaultClick()),
+            httpTracker: TrackerFactory.create(HttpTrackStrategyFactory.createDefaultHttp(IGNORE_URL)),
+            fetchTracker: TrackerFactory.create(HttpTrackStrategyFactory.createDefaultFetch(IGNORE_URL))
         },
     };
 
@@ -39,13 +51,30 @@ export class TracingJS {
         }
     }
 
-    private get clickTracker(): Tracker<TraceClick> {
+    private get clickTracker(): Tracker<Event, TraceClick> {
         if (this.browser.clickTracker) {
             return this.browser.clickTracker;
         } else {
             return this.defaultRegistry["default"].clickTracker!;
         }
     }
+
+    private get httpTracker(): Tracker<EventHttp, Promise<TraceHttp|null>> {
+        if (this.browser.httpTracker) {
+            return this.browser.httpTracker
+        } else {
+            return this.defaultRegistry["default"].httpTracker!
+        }
+    }
+
+    private get fetchTracker(): Tracker<EventFetch, Promise<TraceFetch|null>> {
+        if (this.browser.fetchTracker) {
+            return this.browser.fetchTracker
+        } else {
+            return this.defaultRegistry["default"].fetchTracker!
+        }
+    }
+
 
     constructor(extra?: TraceExtra, registry?: TracingRegistry) {
         this.extra = extra;
@@ -63,14 +92,14 @@ export class TracingJS {
 
     public run(): void {
         this.trackEventClick();
-        this.traceEventPerformance();
+        this.traceHttp();
     }
 
     private trackEventClick(): void {
         fromEvent(win(), "click").pipe(takeUntil(this.destroy$), map((event: Event) => {
             const data = this.clickTracker.track(event);
             if (!data) return undefined;
-            return Packet.create<TraceClick>(data, this.extra);
+            return Packet.create<TraceClick>(TraceType.EVENT, data, this.extra, TraceTag.CLICK, TraceTag.EVENT);
         })).subscribe((packet: TracePacket<TraceClick> | undefined) => {
             if (packet) {
                 this.collector.collect<TraceClick>(packet);
@@ -78,7 +107,50 @@ export class TracingJS {
         });
     }
 
-    private traceEventPerformance(): void {
+    private traceHttp(): void {
+        const point = this;
+        if ('XMLHttpRequest' in win()) {
+            replaceAop(XMLHttpRequest.prototype, 'open', (originalOpen: VoidFun) => {
+                return function (this: any, ...args: any[]): void {
+                    const triggerTime = Date.now();
+                    originalOpen.apply(this, args)
+                    point.httpTracker.track({triggerTime: triggerTime, type: 'open', xhr: this, args})?.then((data) => {
+                        if(data){
+                            const packet = Packet.create<TraceHttp>(TraceType.HTTP, data, point.extra, TraceTag.EVENT, TraceTag.XHR, TraceTag.XHR_OPEN)
+                            point.collector.collect(packet);
+                        }
+                    })
+                }
+            })
+            replaceAop(XMLHttpRequest.prototype, 'send', (originalSend: VoidFun) => {
+                return function (this: any, ...args: any[]): void {
+                    const triggerTime = Date.now();
+                    originalSend.apply(this, args)
+                    point.httpTracker.track({triggerTime: triggerTime, type: 'send', xhr: this, args})?.then((data) => {
+                        if(data){
+                            const packet = Packet.create<TraceHttp>(TraceType.HTTP, data, point.extra, TraceTag.EVENT, TraceTag.XHR, TraceTag.XHR_SEND)
+                            point.collector.collect(packet);
+                        }
+                    })
+                }
+            })
+        }
+        if ('fetch' in win()) {
+            replaceAop(win(), 'fetch', (originalFetch: any) => {
+                return function (this: any, ...args: any[]): void {
+                    let triggerTime: number = Date.now();
+                    return originalFetch.apply(win(), args).then().then((res: Response) => {
+                        point.fetchTracker.track({type: 'fetch', res, args, triggerTime: triggerTime})!.then((data) => {
+                            if(data){
+                                const packet = Packet.create<TraceFetch>(TraceType.HTTP, data, point.extra, TraceTag.EVENT, TraceTag.FETCH)
+                                point.collector.collect(packet);
+                            }
+                        })
+                        return res;
+                    })
+                }
+            })
+        }
     }
 
     private addDestroyListener(): void {

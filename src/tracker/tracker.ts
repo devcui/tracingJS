@@ -1,8 +1,10 @@
-import { TrackStrategy } from "./types";
+import {TrackStrategy} from "./types";
 
-export abstract class Tracker<T> implements TrackStrategy<T> {
-  constructor(private strategy: TrackStrategy<T>) {}
-  track(event: Event): T | undefined {
-    return this.strategy.track(event);
-  }
+export abstract class Tracker<T = any, U = any> implements TrackStrategy<T, U> {
+    constructor(private strategy: TrackStrategy<T>) {
+    }
+
+    track(data: T): U | undefined {
+        return this.strategy.track(data);
+    }
 }
