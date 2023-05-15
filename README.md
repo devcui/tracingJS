@@ -25,7 +25,7 @@ import {
   TraceClick,
   TracingJS,
   TracingRegistry,
-  TrackStrategyFactory,
+  ClickTrackStrategyFactory,
   TrackerFactory,
 } from "../dist/tracingJS/es";
 
@@ -44,7 +44,7 @@ export function registryMain() {
         CollectStrategyFactory.createConsole()
       ),
       clickTracker: TrackerFactory.create<TraceClick>(
-        TrackStrategyFactory.createChromeClick()
+        ClickTrackStrategyFactory.createChromeClick()
       ),
     },
     firefox: {
@@ -52,7 +52,7 @@ export function registryMain() {
         CollectStrategyFactory.createConsole()
       ),
       clickTracker: TrackerFactory.create<TraceClick>(
-        TrackStrategyFactory.createDefaultClick()
+        ClickTrackStrategyFactory.createDefaultClick()
       ),
     },
     // edge hasn't click tracker,so used default.clickTracker
@@ -64,7 +64,7 @@ export function registryMain() {
     // chrome hasn't collector,so used default.collector
     chrome: {
       clickTracker: TrackerFactory.create<TraceClick>(
-        TrackStrategyFactory.createChromeClick()
+        ClickTrackStrategyFactory.createChromeClick()
       ),
     },
   };
@@ -134,7 +134,7 @@ export class MyCollectorStrategyFactory extends CollectStrategyFactory {
 ```ts
 import {
   TrackStrategy,
-  TrackStrategyFactory,
+  ClickTrackStrategyFactory,
   Tracker,
   TrackerFactory,
 } from "../dist/tracingJS/es";
@@ -167,7 +167,7 @@ export class MyTrackStrategy implements TrackStrategy<any> {
 }
 
 // generate your own track strategy factory or use default
-export class MyTrackStrategyFactory extends TrackStrategyFactory {
+export class MyClickTrackStrategyFactory extends ClickTrackStrategyFactory {
   static createMyTrack(): TrackStrategy<any> {
     return new MyTrackStrategy();
   }
@@ -179,7 +179,7 @@ export class MyTrackStrategyFactory extends TrackStrategyFactory {
 ```ts
 import { TracingJS, TracingRegistry } from "../dist/tracingJS/es";
 import { MyCollectorFactory, MyCollectorStrategyFactory } from "./my-collect";
-import { MyTrackStrategyFactory, MyTrackerFactory } from "./my-tracker";
+import { MyClickTrackStrategyFactory, MyTrackerFactory } from "./my-tracker";
 
 export function myMain() {
   const registry: TracingRegistry = {
@@ -188,7 +188,7 @@ export function myMain() {
         MyCollectorStrategyFactory.createMyCollectStrategy({ say: "ahaha" })
       ),
       clickTracker: MyTrackerFactory.createMyTracker(
-        MyTrackStrategyFactory.createMyTrack()
+        MyClickTrackStrategyFactory.createMyTrack()
       ),
     },
   };
